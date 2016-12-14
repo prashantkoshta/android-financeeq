@@ -13,8 +13,33 @@
     tools:context="com.devcli.finance_eq.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/listViewEq" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:id="@+id/progressBar"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="true" />
+
+    <FrameLayout
+        android:id="@+id/frag_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="com.devcli.finance_eq.calculator.SimpleInterest"
+            android:id="@+id/fragment"
+            tools:layout="@layout/simple_interest" />
+    </FrameLayout>
 </RelativeLayout>
