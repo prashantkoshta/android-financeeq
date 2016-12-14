@@ -5,6 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="caltype">Simple Interest</string>
     <string name="calculate">Calculate</string>
-    <string name="amount">Amount</string>
+    <string name="labelAmount">Amount</string>
+    <string name="labelRate">Rate</string>
+    <string name="labelYear">Year</string>
 </resources>

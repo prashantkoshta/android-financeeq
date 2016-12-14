@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.devcli.finance_eq.calculator.CalcHome;
 import com.devcli.finance_eq.calculator.SimpleInterest;
 import com.devcli.finance_eq.service.ServiceHandler;
 import com.devcli.finance_eq.vo.Calculator;
@@ -41,12 +42,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
 
-    private static final String TAG = MainActivity.class.getName();
-    private ListView listView;
-    private List<Calculator> list;
-    private ArrayAdapter<Calculator> adapter;
-    private ResultReceiver receiver;
-    private ProgressBar _progressBar;
+
     FragmentManager _fragmentManager;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -84,65 +80,29 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-
-        listView = (ListView) findViewById(R.id.listViewEq);
-
-
-        this.list = new ArrayList<Calculator>();
-        adapter = new ArrayAdapter<Calculator>(MainActivity.this, R.layout.list_row_item, R.id.lsRowText, list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Calculator calc = (Calculator) adapterView.getSelectedItem();
-                Log.i("####", adapterView.toString());
-                addFragemnt();
-            }
-        });
-
-        if (savedInstanceState != null) {
-            adapter.clear();
-            list = (ArrayList<Calculator>) savedInstanceState.getSerializable("list");
-            adapter.addAll(list);
-            _progressBar.setVisibility(View.INVISIBLE);
-        } else {
-            ServiceHandler sHandler = new ServiceHandler();
-            Intent intent = new Intent(this, ServiceHandler.class);
-            intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/listofequation");
-            startService(intent);
-            _progressBar.setVisibility(View.VISIBLE);
-        }
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        addHomeFragment();
     }
 
-    private void addFragemnt(){
-        SimpleInterest simpleInterest = new SimpleInterest();
-       // FragmentTransaction fragmentTransaction;
-        _fragmentManager.beginTransaction().add(R.id.frag_container, simpleInterest, "SI").addToBackStack("AASds").commit();
+    private void addHomeFragment(){
+        CalcHome calcHome = new CalcHome();
+        FragmentTransaction fragmentTransaction = _fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.frag_container, calcHome, "HOME");
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.addToBackStack("HOME");
+        fragmentTransaction.commit();
         _fragmentManager.executePendingTransactions();
-            Log.i(">>>>>>",">>>"+getFragmentManager().getBackStackEntryCount());
-
-        //fragmentTransaction.setCustomAnimations(0, R.anim.slide_out_top);
-        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
     }
 
     @Override
     protected void onStart() {
-        receiver = new ResultReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("GET_LIST");
-        registerReceiver(receiver, intentFilter);
-        //
         super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -151,7 +111,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        unregisterReceiver(receiver);
         super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
 // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
@@ -160,15 +119,9 @@ public class MainActivity extends AppCompatActivity
         client.disconnect();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList<Calculator>) list);
-    }
 
     @Override
     public void onBackPressed() {
-        Log.i(">>>>>>",">>2222>"+_fragmentManager.getBackStackEntryCount());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -230,16 +183,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackStackChanged() {
-        SimpleInterest simpleInterest = (SimpleInterest) _fragmentManager.findFragmentByTag("SI");
+        /*SimpleInterest simpleInterest = (SimpleInterest) _fragmentManager.findFragmentByTag("SI");
         FragmentTransaction fragmentTransaction = _fragmentManager.beginTransaction();
-
         if (simpleInterest != null) {
             fragmentTransaction.remove(simpleInterest);
-            //fragmentTransaction.addToBackStack("REM_SI");
             fragmentTransaction.commit();
         } else {
 
-        }
+        }*/
     }
 
     /**
@@ -259,14 +210,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private class ResultReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            adapter.clear();
-            list = (ArrayList<Calculator>) intent.getSerializableExtra("result");
-            adapter.addAll(list);
-            _progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
+
 
 }
