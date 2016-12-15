@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTextViewSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_800</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="AppTextViewMedium" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_800</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTextViewLarge" parent="@android:style/TextAppearance.Large">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_800</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="AppButton" parent="Base.Widget.AppCompat.Button">
+        <item name="android:color">@color/orange_300</item>
+        <item name="android:textColor">@color/gray_50</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@color/orange_700</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:textStyle">normal|bold</item>
+        <item name="android:bottomLeftRadius">4dp</item>
+        <item name="android:bottomRightRadius">4dp</item>
+        <item name="android:topLeftRadius">4dp</item>
+        <item name="android:topRightRadius">4dp</item>
+
+
+
+
+    </style>
+
+
+
+
+</resources>

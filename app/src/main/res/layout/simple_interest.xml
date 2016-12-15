@@ -7,26 +7,19 @@
     android:background="#ffffff">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/caltype"
-        android:ems="10"
         android:id="@+id/txtViewCalType"
+        android:text="@string/caltype"
         android:textAlignment="center"
-        android:textStyle="normal|bold"
-        android:textSize="18sp" />
+        style="@style/AppTextViewLarge" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/AppTextViewMedium"
             android:text="@string/labelAmount"
-            android:ems="10"
-            android:id="@+id/txtViewAmount"
-            android:textSize="18sp" />
+            android:id="@+id/txtViewAmount"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -80,12 +73,11 @@
     </LinearLayout>
 
 
-
     <Button
+        style="@style/AppButton"
         android:text="@string/calculate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnCalculate" />
+        android:id="@+id/btnCalculate"
+        android:layout_gravity="center"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -94,6 +86,7 @@
         android:ems="10"
         android:id="@+id/txtViewResult"
         android:textSize="18sp" />
+
 
 
 
