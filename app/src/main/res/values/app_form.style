@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppFormTextView" parent="AppTextViewLarge">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.4</item>
+    </style>
+
+    <style name="AppFormEditText" parent="AppEditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.6</item>
+    </style>
+
+
+
+
+
+
+</resources>

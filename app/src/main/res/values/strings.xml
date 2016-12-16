@@ -8,6 +8,15 @@
     <string name="caltype">Simple Interest</string>
     <string name="calculate">Calculate</string>
     <string name="labelAmount">Amount</string>
-    <string name="labelRate">Rate</string>
-    <string name="labelYear">Year</string>
+    <string name="labelRate">Rate (%)</string>
+    <string name="labelYear">Time</string>
+    <string name="ci_labelCompound">Compound (n)</string>
+    <string name="ci_lableTime">Time(In Years)</string>
+    
+    <!-- Loan Calculator -->
+    <string name="loan_amount">Loan Amount</string>
+    <string name="loan_interest_rate">Interest Rate</string>
+    <string name="loan_term">Terms</string>
+    <string name="loan_time_frame"></string>
+    
 </resources>

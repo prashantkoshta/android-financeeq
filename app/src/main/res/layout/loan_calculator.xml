@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:layout_margin="0dp" android:padding="0dp">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray_100"
-    android:padding="0dp">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_100"
+        android:padding="0dp">
 
         <TextView
             android:id="@+id/txtViewCalType"
@@ -28,13 +28,13 @@
 
             <TextView
                 style="@style/AppFormTextView"
-                android:text="@string/labelAmount"
+                android:text="@string/loan_amount"
                 android:id="@+id/txtViewAmount"/>
 
             <EditText
                 style="@style/AppFormEditText"
                 android:inputType="number|numberDecimal"
-                android:id="@+id/txtEditAmount"
+                android:id="@+id/txt_p"
                 android:text="10"/>
         </LinearLayout>
 
@@ -46,13 +46,13 @@
 
             <TextView
                 style="@style/AppFormTextView"
-                android:text="@string/labelRate"
+                android:text="@string/loan_interest_rate"
                 android:id="@+id/txtViewRate"/>
 
             <EditText
                 style="@style/AppFormEditText"
                 android:inputType="number|numberDecimal"
-                android:id="@+id/txtEditRate"
+                android:id="@+id/txt_r"
                 android:text="10" />
         </LinearLayout>
 
@@ -62,16 +62,17 @@
 
             <TextView
                 style="@style/AppFormTextView"
-                android:text="@string/labelYear"
+                android:text="@string/loan_term"
                 android:ems="10"
                 android:id="@+id/txtViewYear" />
 
             <EditText
                 style="@style/AppFormEditText"
                 android:inputType="number"
-                android:id="@+id/txtEditYear"
+                android:id="@+id/txt_t"
                 android:text="10" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,15 +81,15 @@
             <TextView
                 style="@style/AppFormTextView"
                 android:text=""
-                android:ems="10"
-                android:id="@+id/txtViewFrequency" />
+                android:layout_weight="0.4"
+                android:id="@+id/txtv_n" />
 
 
             <Spinner
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.6"
-                android:id="@+id/spinnerFreq"
+                android:id="@+id/spinner_n"
                 android:spinnerMode="dialog" />
         </LinearLayout>
 
@@ -111,6 +112,6 @@
             android:id="@+id/txtViewDesc" />
 
 
-</LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

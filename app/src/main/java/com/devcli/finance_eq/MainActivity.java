@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 
 import com.devcli.finance_eq.calculator.CalcHome;
 import com.devcli.finance_eq.calculator.SimpleInterest;
+import com.devcli.finance_eq.core.CoreAppCompatActivity;
 import com.devcli.finance_eq.service.ServiceHandler;
 import com.devcli.finance_eq.vo.Calculator;
 import com.google.android.gms.appindexing.Action;
@@ -39,7 +40,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends CoreAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
 
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,16 @@ public class MainActivity extends AppCompatActivity
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        addHomeFragment();
+        if(savedInstanceState == null){
+            addHomeFragment();
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("Loaded","Done");
     }
 
     private void addHomeFragment(){
@@ -125,8 +136,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(_fragmentManager.getBackStackEntryCount()>0){
+        } else if(_fragmentManager.getBackStackEntryCount()>1){
             _fragmentManager.popBackStack();
+        } else if(_fragmentManager.getBackStackEntryCount()==1){
+            // Do Nothing
+            _fragmentManager.popBackStack();
+            super.onBackPressed();
         }else{
             super.onBackPressed();
         }
@@ -159,9 +174,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_home) {
+            if(_fragmentManager.getBackStackEntryCount()>1) {
+                _fragmentManager.popBackStack();
+            }
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

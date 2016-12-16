@@ -28,4 +28,8 @@
     <color name="gray_800">#424242</color>
     <color name="gray_900">#212121</color>
 
+    <!-- white -->
+    <color name="white">#fff</color>
+    <color name="black">#000</color>
+
 </resources>

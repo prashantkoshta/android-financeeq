@@ -18,9 +18,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.devcli.finance_eq.R;
+import com.devcli.finance_eq.core.CoreFragment;
 import com.devcli.finance_eq.service.ServiceHandler;
 import com.devcli.finance_eq.vo.Calculator;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +31,7 @@ import java.util.List;
  * Created by prashantkoshta on 12/13/16.
  */
 
-public class CalcHome extends Fragment {
+public class CalcHome extends CoreFragment {
 
     private static final String TAG = CalcHome.class.getName();
     private ListView listView;
@@ -41,6 +44,13 @@ public class CalcHome extends Fragment {
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _fragmentManager = getFragmentManager();
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.calc_home, container,false);
     }
@@ -48,8 +58,6 @@ public class CalcHome extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        _fragmentManager = getFragmentManager();
-
         _progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
         listView = (ListView) getView().findViewById(R.id.listViewEq);
         this.list = new ArrayList<Calculator>();
@@ -58,8 +66,9 @@ public class CalcHome extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Calculator calc = (Calculator) adapterView.getSelectedItem();
-                addCalcFragment();
+                ArrayAdapter<Calculator> ad = (ArrayAdapter<Calculator>) adapterView.getAdapter();
+                Calculator calc = (Calculator)ad.getItem(i);
+                addCalcFragment(calc);
                 Log.i("####", adapterView.toString());
             }
         });
@@ -72,7 +81,8 @@ public class CalcHome extends Fragment {
         } else {
             ServiceHandler sHandler = new ServiceHandler();
             Intent intent = new Intent(this.getActivity(), ServiceHandler.class);
-            intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/listofequation");
+            intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/an-listofequation");
+            //intent.putExtra("url", "http://192.168.0.27:5000/fneqapi/an-listofequation");
             this.getActivity().startService(intent);
             _progressBar.setVisibility(View.VISIBLE);
         }
@@ -93,10 +103,6 @@ public class CalcHome extends Fragment {
         super.onStop();;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -104,10 +110,24 @@ public class CalcHome extends Fragment {
         outState.putSerializable("list", (ArrayList<Calculator>) list);
     }
 
-    private void addCalcFragment(){
-        SimpleInterest simpleInterest = new SimpleInterest();
+    private void addCalcFragment(Calculator calc){
+        Bundle b = new Bundle();
+        b.putSerializable("objCalculator",calc);
+        CoreFragment coreFragment = null;
+        Class clazz = null;
+        try {
+            clazz = Class.forName(calc.action);
+            coreFragment = (CoreFragment) clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }  catch (java.lang.InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        coreFragment.setArguments(b);
         FragmentTransaction fragmentTransaction = _fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.calc_container, simpleInterest, "Calc");
+        fragmentTransaction.add(R.id.calc_container, coreFragment, "Calc");
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.addToBackStack("Calc");
         fragmentTransaction.commit();

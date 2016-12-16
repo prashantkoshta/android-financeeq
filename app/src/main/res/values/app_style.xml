@@ -22,14 +22,20 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="AppEditText" parent="@android:style/Widget.Material.EditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gray_800</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+
     <style name="AppButton" parent="Base.Widget.AppCompat.Button">
-        <item name="android:color">@color/orange_300</item>
-        <item name="android:textColor">@color/gray_50</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">36dp</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:background">@color/orange_700</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:textStyle">normal|bold</item>
@@ -37,11 +43,11 @@
         <item name="android:bottomRightRadius">4dp</item>
         <item name="android:topLeftRadius">4dp</item>
         <item name="android:topRightRadius">4dp</item>
-
-
-
-
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/app_button</item>
     </style>
+
 
 
 
