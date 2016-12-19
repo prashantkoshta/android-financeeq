@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.devcli.finance_eq.R;
 import com.devcli.finance_eq.core.CoreFragment;
+import com.devcli.finance_eq.service.CalculatorAPIService;
+import com.devcli.finance_eq.service.CalculatorClient;
 import com.devcli.finance_eq.service.CalculatorService;
 import com.devcli.finance_eq.service.ServiceHandler;
 import com.devcli.finance_eq.utils.Constants;
@@ -36,13 +38,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.Observer;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by prashantkoshta on 12/13/16.
  */
 
-public class CalcHome extends CoreFragment implements Callback<Calculators> {
+public class CalcHome extends CoreFragment{
 
     private static final String TAG = CalcHome.class.getName();
     private ListView listView;
@@ -51,6 +61,8 @@ public class CalcHome extends CoreFragment implements Callback<Calculators> {
     //private CalcHome.ResultReceiver receiver;
     private ProgressBar _progressBar;
     private FragmentManager _fragmentManager;
+
+    private Subscription _subscription;
 
 
 
@@ -94,31 +106,50 @@ public class CalcHome extends CoreFragment implements Callback<Calculators> {
             }
         }); */
 
+        // By Service Handler
+/*ServiceHandler sHandler = new ServiceHandler();
+Intent intent = new Intent(this.getActivity(), ServiceHandler.class);
+intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/an-listofequation");
+//intent.putExtra("url", "http://192.168.0.27:5000/fneqapi/an-listofequation");
+this.getActivity().startService(intent);
+_progressBar.setVisibility(View.VISIBLE);*/// By retrofit2
+/*
+Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(Constants.BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
+
+// By retrofit2
+//CalculatorService calculatorService = retrofit.create(CalculatorService.class);
+// Call<Calculators> call =  calculatorService.loadCalculators();
+// call.enqueue(this);
+*/// By RXJava + Retorfit 2
         if (savedInstanceState != null) {
             adapter.clear();
             list = (ArrayList<Calculator>) savedInstanceState.getSerializable("list");
             adapter.addAll(list);
             _progressBar.setVisibility(View.INVISIBLE);
         } else {
+            _subscription = Observable.just(CalculatorClient.getInstance().getCalcData())
+                    .cast(Calculators.class)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Calculators>() {
+                        @Override
+                        public void onCompleted() {
 
-            // By Service Handler
-            /*ServiceHandler sHandler = new ServiceHandler();
-            Intent intent = new Intent(this.getActivity(), ServiceHandler.class);
-            intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/an-listofequation");
-            //intent.putExtra("url", "http://192.168.0.27:5000/fneqapi/an-listofequation");
-            this.getActivity().startService(intent);
-            _progressBar.setVisibility(View.VISIBLE);*/
+                        }
 
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+                        @Override
+                        public void onError(Throwable e) {
 
-            // By retrofit2
-            CalculatorService calculatorService = retrofit.create(CalculatorService.class);
-            Call<Calculators> call =  calculatorService.loadCalculators();
-            call.enqueue(this);
+                        }
 
+                        @Override
+                        public void onNext(Calculators calculators) {
+
+                        }
+                    });
         }
     }
 
@@ -134,6 +165,7 @@ public class CalcHome extends CoreFragment implements Callback<Calculators> {
     @Override
     public void onStop() {
         //getActivity().unregisterReceiver(receiver);
+        _subscription.unsubscribe();
         super.onStop();;
     }
 
@@ -168,7 +200,7 @@ public class CalcHome extends CoreFragment implements Callback<Calculators> {
         _fragmentManager.executePendingTransactions();
 
     }
-
+/*
     @Override
     public void onResponse(Call<Calculators> call, Response<Calculators> response) {
         _progressBar.setVisibility(View.INVISIBLE);
@@ -178,12 +210,14 @@ public class CalcHome extends CoreFragment implements Callback<Calculators> {
             adapter.addAll(ls);
     }
 
-
     @Override
     public void onFailure(Call<Calculators> call, Throwable t) {
         _progressBar.setVisibility(View.INVISIBLE);
         Toast.makeText(this.getActivity(),"Server error.",Toast.LENGTH_LONG).show();
     }
+
+*/
+
 
 
     /*private class ResultReceiver extends BroadcastReceiver {

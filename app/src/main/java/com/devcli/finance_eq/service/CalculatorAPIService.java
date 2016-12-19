@@ -2,16 +2,15 @@ package com.devcli.finance_eq.service;
 
 import com.devcli.finance_eq.utils.Constants;
 import com.devcli.finance_eq.vo.Calculators;
-
-import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Query;
+import rx.Observable;
+import rx.Observer;
 
 /**
- * Created by prashantkoshta on 12/17/16.
+ * Created by prashantkoshta on 12/18/16.
  */
 
-public interface CalculatorService {
+public interface CalculatorAPIService {
     @GET(Constants.CALC_URL)
-    Call<Calculators> loadCalculators();
+    Observable<Calculators> loadCalculators();
 }
