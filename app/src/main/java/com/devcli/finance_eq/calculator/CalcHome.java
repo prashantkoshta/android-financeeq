@@ -16,28 +16,39 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.devcli.finance_eq.R;
 import com.devcli.finance_eq.core.CoreFragment;
+import com.devcli.finance_eq.service.CalculatorService;
 import com.devcli.finance_eq.service.ServiceHandler;
+import com.devcli.finance_eq.utils.Constants;
 import com.devcli.finance_eq.vo.Calculator;
+import com.devcli.finance_eq.vo.Calculators;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by prashantkoshta on 12/13/16.
  */
 
-public class CalcHome extends CoreFragment {
+public class CalcHome extends CoreFragment implements Callback<Calculators> {
 
     private static final String TAG = CalcHome.class.getName();
     private ListView listView;
     private List<Calculator> list;
     private ArrayAdapter<Calculator> adapter;
-    private CalcHome.ResultReceiver receiver;
+    //private CalcHome.ResultReceiver receiver;
     private ProgressBar _progressBar;
     private FragmentManager _fragmentManager;
 
@@ -63,7 +74,17 @@ public class CalcHome extends CoreFragment {
         this.list = new ArrayList<Calculator>();
         adapter = new ArrayAdapter<Calculator>(this.getActivity(), R.layout.list_row_item, R.id.lsRowText, list);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        listView.setOnItemClickListener(
+                (AdapterView<?> adapterView, View view1, int i, long l) -> {
+                    ArrayAdapter<Calculator> ad = (ArrayAdapter<Calculator>) adapterView.getAdapter();
+                    Calculator calc = (Calculator)ad.getItem(i);
+                    addCalcFragment(calc);
+                    Log.i("####", adapterView.toString());
+                }
+        );
+
+       /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ArrayAdapter<Calculator> ad = (ArrayAdapter<Calculator>) adapterView.getAdapter();
@@ -71,7 +92,7 @@ public class CalcHome extends CoreFragment {
                 addCalcFragment(calc);
                 Log.i("####", adapterView.toString());
             }
-        });
+        }); */
 
         if (savedInstanceState != null) {
             adapter.clear();
@@ -79,27 +100,40 @@ public class CalcHome extends CoreFragment {
             adapter.addAll(list);
             _progressBar.setVisibility(View.INVISIBLE);
         } else {
-            ServiceHandler sHandler = new ServiceHandler();
+
+            // By Service Handler
+            /*ServiceHandler sHandler = new ServiceHandler();
             Intent intent = new Intent(this.getActivity(), ServiceHandler.class);
             intent.putExtra("url", "https://app-service-fn.herokuapp.com/fneqapi/an-listofequation");
             //intent.putExtra("url", "http://192.168.0.27:5000/fneqapi/an-listofequation");
             this.getActivity().startService(intent);
-            _progressBar.setVisibility(View.VISIBLE);
+            _progressBar.setVisibility(View.VISIBLE);*/
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            // By retrofit2
+            CalculatorService calculatorService = retrofit.create(CalculatorService.class);
+            Call<Calculators> call =  calculatorService.loadCalculators();
+            call.enqueue(this);
+
         }
     }
 
     @Override
     public void onStart() {
-        receiver = new ResultReceiver();
+       /* receiver = new ResultReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("GET_LIST");
-        getActivity().registerReceiver(receiver, intentFilter);
+        getActivity().registerReceiver(receiver, intentFilter);*/
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        getActivity().unregisterReceiver(receiver);
+        //getActivity().unregisterReceiver(receiver);
         super.onStop();;
     }
 
@@ -135,8 +169,24 @@ public class CalcHome extends CoreFragment {
 
     }
 
+    @Override
+    public void onResponse(Call<Calculators> call, Response<Calculators> response) {
+        _progressBar.setVisibility(View.INVISIBLE);
+        adapter.clear();
+        List<Calculator>  ls = (ArrayList<Calculator>)response.body().listOfCals;
+        if(ls!=null)
+            adapter.addAll(ls);
+    }
 
-    private class ResultReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onFailure(Call<Calculators> call, Throwable t) {
+        _progressBar.setVisibility(View.INVISIBLE);
+        Toast.makeText(this.getActivity(),"Server error.",Toast.LENGTH_LONG).show();
+    }
+
+
+    /*private class ResultReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             adapter.clear();
@@ -144,5 +194,5 @@ public class CalcHome extends CoreFragment {
             adapter.addAll(list);
             _progressBar.setVisibility(View.INVISIBLE);
         }
-    }
+    }*/
 }
