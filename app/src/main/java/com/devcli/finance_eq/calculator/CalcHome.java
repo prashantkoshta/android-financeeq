@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.devcli.finance_eq.utils.Constants;
 import com.devcli.finance_eq.vo.Calculator;
 import com.devcli.finance_eq.vo.Calculators;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -66,9 +68,11 @@ public class CalcHome extends CoreFragment{
 
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.list = new ArrayList<Calculator>();
         _fragmentManager = getFragmentManager();
     }
 
@@ -83,7 +87,6 @@ public class CalcHome extends CoreFragment{
         super.onViewCreated(view, savedInstanceState);
         _progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
         listView = (ListView) getView().findViewById(R.id.listViewEq);
-        this.list = new ArrayList<Calculator>();
         adapter = new ArrayAdapter<Calculator>(this.getActivity(), R.layout.list_row_item, R.id.lsRowText, list);
         listView.setAdapter(adapter);
 
@@ -126,15 +129,14 @@ Retrofit retrofit = new Retrofit.Builder()
 */// By RXJava + Retorfit 2
         if (savedInstanceState != null) {
             adapter.clear();
-            list = (ArrayList<Calculator>) savedInstanceState.getSerializable("list");
+            list = savedInstanceState.getParcelableArrayList("list");
             adapter.addAll(list);
             _progressBar.setVisibility(View.INVISIBLE);
         } else {
-            _subscription = Observable.just(CalculatorClient.getInstance().getCalcData())
-                    .cast(Calculators.class)
-                    .subscribeOn(Schedulers.io())
+            _subscription = CalculatorClient.getInstance().getCalcData()
+                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<Calculators>() {
+                    .subscribe(new Subscriber<Calculators>() {
                         @Override
                         public void onCompleted() {
 
@@ -142,12 +144,14 @@ Retrofit retrofit = new Retrofit.Builder()
 
                         @Override
                         public void onError(Throwable e) {
-
+                            Log.e(TAG,e.toString());
                         }
 
                         @Override
                         public void onNext(Calculators calculators) {
-
+                            _progressBar.setVisibility(View.INVISIBLE);
+                            adapter.clear();
+                            adapter.addAll(calculators.getListOfCals());
                         }
                     });
         }
@@ -164,25 +168,29 @@ Retrofit retrofit = new Retrofit.Builder()
 
     @Override
     public void onStop() {
-        //getActivity().unregisterReceiver(receiver);
-        _subscription.unsubscribe();
         super.onStop();;
     }
 
+    @Override
+    public void onDestroy() {
+        if(_subscription!= null) _subscription.unsubscribe();
+        super.onDestroy();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList<Calculator>) list);
+        outState.putParcelableArrayList("list", (ArrayList<Calculator>) list);
     }
 
     private void addCalcFragment(Calculator calc){
         Bundle b = new Bundle();
-        b.putSerializable("objCalculator",calc);
+        b.putParcelable("objCalculator", calc);
+        //b.putSerializable("objCalculator", calc);
         CoreFragment coreFragment = null;
         Class clazz = null;
         try {
-            clazz = Class.forName(calc.action);
+            clazz = Class.forName(calc.getAction());
             coreFragment = (CoreFragment) clazz.newInstance();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

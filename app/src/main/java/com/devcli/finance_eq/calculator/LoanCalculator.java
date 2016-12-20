@@ -47,12 +47,12 @@ public class LoanCalculator extends CoreFragment {
         final Spinner spinner_n = (Spinner) getView().findViewById(R.id.spinner_n);
 
 
-        Calculator calc  = (Calculator) getArguments().getSerializable("objCalculator");
+        Calculator calc  = (Calculator) getArguments().getParcelable("objCalculator");
 
-        txtViewDesc.setText(Html.fromHtml(calc.descriptions));
-        txtViewCalType.setText(calc.type);
+        txtViewDesc.setText(Html.fromHtml(calc.getDescriptions()));
+        txtViewCalType.setText(calc.getType());
 
-        List<String> list =  (ArrayList<String>)calc.frequency;
+        List<String> list =  (ArrayList<String>)calc.getFrequency();
 
         ArrayAdapter<String> ad = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,list);
         ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -1,5 +1,7 @@
 package com.devcli.finance_eq.service;
 
+import android.util.Log;
+
 import com.devcli.finance_eq.utils.Constants;
 import com.devcli.finance_eq.vo.Calculator;
 import com.devcli.finance_eq.vo.Calculators;
@@ -20,18 +22,20 @@ import rx.Subscriber;
  */
 
 public class CalculatorClient {
+    private static final String TAG = CalculatorClient.class.getName();
     private static CalculatorClient _calculatorClient;
     private CalculatorAPIService _calculatorAPIServiceService;
 
-    private void CalculatorClient(){
+    public CalculatorClient(){
         final Gson gson =
                 new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
          _calculatorAPIServiceService = retrofit.create(CalculatorAPIService.class);
+        Log.i(TAG,">>>>>>>>");
     }
 
     public  static CalculatorClient getInstance(){
@@ -42,7 +46,7 @@ public class CalculatorClient {
     }
 
     public Observable<Calculators> getCalcData(){
-        return Observable.create(new OnSubscribe<Calculators>() {
+        /*return Observable.create(new OnSubscribe<Calculators>() {
             @Override
             public void call(Subscriber<? super Calculators> subscriber) {
                 //subscriber.onError(new RuntimeException("boo"));
@@ -53,8 +57,7 @@ public class CalculatorClient {
             }
 
 
-        });
-
-        //return  _calculatorAPIServiceService.loadCalculators();
+        });*/
+        return  _calculatorAPIServiceService.loadCalculators();
     }
 }
